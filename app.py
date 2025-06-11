@@ -19,13 +19,33 @@ def login_to_instagram(username, password):
         print(f"[LOGIN ERROR] {e}")
         return None
 
-def send_looping_messages(cl, receiver_username, messages, delay):
+def get_recipient_id(cl, receiver):
     try:
-        user_id = cl.user_id_from_username(receiver_username)
+        if receiver.startswith("group:"):
+            thread_id = receiver.split("group:")[1]
+            return thread_id, True
+        else:
+            user_id = cl.user_id_from_username(receiver)
+            return user_id, False
+    except Exception as e:
+        print(f"[RECIPIENT ERROR] {e}")
+        return None, None
+
+def send_looping_messages(cl, receiver, messages, delay, person_name):
+    try:
+        recipient_id, is_group = get_recipient_id(cl, receiver)
+        if not recipient_id:
+            print("[ERROR] Invalid receiver.")
+            return
+
         while True:
             for msg in messages:
-                cl.direct_send(msg, [user_id])
-                print(f"[SENT] {msg}")
+                full_msg = f"{person_name} {msg}"
+                if is_group:
+                    cl.direct_send(full_msg, [], thread_ids=[recipient_id])
+                else:
+                    cl.direct_send(full_msg, [recipient_id])
+                print(f"[SENT] {full_msg}")
                 time.sleep(delay)
     except Exception as e:
         print(f"[SEND LOOP ERROR] {e}")
@@ -35,8 +55,13 @@ def index():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        receiver = request.form.get('receiver')
+        receiver = request.form.get('receiver')  # DM username or group:<thread_id>
+        person_name = request.form.get('person_name', '').strip()
         delay = int(request.form.get('delay', 5))
+
+        if not person_name:
+            flash('❌ Person name is required.')
+            return redirect('/')
 
         file = request.files.get('message_file')
         if not file or file.filename == '':
@@ -54,14 +79,10 @@ def index():
             flash('❌ Login failed. Check your credentials.')
             return redirect('/')
 
-        # Start message loop in background
-        threading.Thread(target=send_looping_messages, args=(cl, receiver, messages, delay), daemon=True).start()
+        threading.Thread(target=send_looping_messages, args=(cl, receiver, messages, delay, person_name), daemon=True).start()
 
         flash('✅ Message loop started successfully! (Don’t close the server)')
         return redirect('/')
 
     return render_template('index.html')
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
     
