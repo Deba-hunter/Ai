@@ -4,8 +4,6 @@ import os, time
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
-
-# Make sure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -26,7 +24,18 @@ def index():
 
         # Login and send message
         cl = Client()
-        cl.login(username, password)
+
+        try:
+            cl.login(username, password)
+        except Exception as e:
+            # Handle 2FA
+            if "challenge_required" in str(e).lower():
+                cl.get_timeline_feed()
+                print("🔐 Two-factor authentication required.")
+                code = input("Enter 2FA code sent to your phone/email: ")
+                cl.challenge_resolve(code)
+            else:
+                return f"❌ Login Failed: {e}"
 
         time.sleep(delay)
         user_id = cl.user_id_from_username(receiver)
@@ -36,7 +45,6 @@ def index():
 
     return render_template('index.html')
 
-# Run on mobile-accessible network
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
     
