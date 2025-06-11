@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Send Message</title></head>
+<body>
+  <h2>Send Instagram Message</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="text" name="receiver" placeholder="Receiver Username" required><br><br>
+    <input type="number" name="delay" placeholder="Delay in seconds" value="5" required><br><br>
+    <input type="file" name="message_file" accept=".txt" required><br><br>
+    <button type="submit">Send</button>
+  </form>
+</body>
+</html>
