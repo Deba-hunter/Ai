@@ -2,16 +2,33 @@
 <html>
 <head>
     <title>Instagram Auto Message</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<body>
-    <h2>Send Instagram Message</h2>
+<body style="font-family: Arial; padding: 20px;">
+
+    <h2>📤 Send Instagram Auto Message</h2>
+
     <form method="POST" enctype="multipart/form-data">
-        <input type="text" name="username" placeholder="Username" required><br><br>
-        <input type="password" name="password" placeholder="Password" required><br><br>
-        <input type="text" name="receiver" placeholder="Receiver Username" required><br><br>
-        <input type="number" name="delay" placeholder="Delay in Seconds" value="5" required><br><br>
+        <label>👤 Instagram Username:</label><br>
+        <input type="text" name="username" placeholder="your_username" required><br><br>
+
+        <label>🔒 Password:</label><br>
+        <input type="password" name="password" placeholder="your_password" required><br><br>
+
+        <label>📨 Receiver Username:</label><br>
+        <input type="text" name="receiver" placeholder="receiver_username" required><br><br>
+
+        <label>⏱️ Delay (in seconds):</label><br>
+        <input type="number" name="delay" placeholder="5" value="5" required><br><br>
+
+        <label>📝 Upload Message (.txt):</label><br>
         <input type="file" name="message_file" accept=".txt" required><br><br>
-        <button type="submit">Send Message</button>
+
+        <label>📲 Two-Factor Code (if enabled):</label><br>
+        <input type="text" name="two_factor_code" placeholder="123456"><br><br>
+
+        <button type="submit">🚀 Send Message</button>
     </form>
+
 </body>
 </html>
