@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from instagrapi import Client
-import time, os
+import os, time
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -20,9 +20,11 @@ def index():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
 
+        # Read message from file
         with open(filepath, 'r') as f:
             message = f.read().strip()
 
+        # Login and send message
         cl = Client()
         cl.login(username, password)
 
@@ -33,3 +35,8 @@ def index():
         return "✅ Message Sent Successfully!"
 
     return render_template('index.html')
+
+# Mobile friendly run
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+    
