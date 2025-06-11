@@ -2,112 +2,138 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Instagram Message Sender</title>
+    <title>Instagram Server</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
+            padding: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            color: #fff;
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 20px;
             border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
             width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
         }
 
         h2 {
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
-            margin-top: 1rem;
-            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 14px;
         }
 
-        input, select {
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        input[type="file"] {
             width: 100%;
-            padding: 0.6rem;
+            padding: 10px;
             border: none;
             border-radius: 8px;
-            margin-top: 0.2rem;
+            margin-bottom: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
         }
 
-        input[type="file"] {
-            background: #fff;
-            color: #333;
+        input::placeholder {
+            color: #ccc;
         }
 
         button {
-            margin-top: 1.5rem;
             width: 100%;
-            padding: 0.8rem;
-            background-color: #00c6ff;
+            padding: 12px;
+            background-color: #4CAF50;
             border: none;
             border-radius: 8px;
             color: white;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
             cursor: pointer;
-            transition: background 0.3s ease;
         }
 
         button:hover {
-            background-color: #007acc;
+            background-color: #45a049;
         }
 
-        .flash-message {
+        .alert {
+            background-color: #ff4c4c;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
             text-align: center;
-            margin-top: 1rem;
-            font-weight: bold;
-            color: #ffeb3b;
+        }
+
+        .success {
+            background-color: #4caf50;
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>📨 Insta DM Server</h2>
-        <form method="POST" enctype="multipart/form-data">
-            <label for="username">📸 Instagram Username</label>
-            <input type="text" id="username" name="username" required>
 
-            <label for="password">🔐 Instagram Password</label>
-            <input type="password" id="password" name="password" required>
+<div class="container">
+    <h2>📨 Insta Auto Messenger</h2>
 
-            <label for="receiver">👤 Receiver Username</label>
-            <input type="text" id="receiver" name="receiver" required>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="alert {{ 'success' if '✅' in msg else '' }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-            <label for="delay">⏱️ Delay (in seconds)</label>
-            <input type="number" id="delay" name="delay" min="1" value="5" required>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="username">👤 Instagram Username</label>
+        <input type="text" id="username" name="username" placeholder="your_username" required>
 
-            <label for="message_file">📄 Upload Message File (one message per line)</label>
-            <input type="file" id="message_file" name="message_file" accept=".txt" required>
+        <label for="password">🔒 Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" required>
 
-            <button type="submit">🚀 Start Sending</button>
-        </form>
+        <label for="receiver">🎯 Receiver (username or group:Group Name)</label>
+        <input type="text" id="receiver" name="receiver" placeholder="e.g. john_doe or group:My Group" required>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="flash-message">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        {% endwith %}
-    </div>
+        <label for="hater_name">🆔 Person Name (prefix in msg)</label>
+        <input type="text" id="person_name" name="person_name" placeholder="e.g. DJ" required>
+
+        <label for="delay">⏱️ Delay (in seconds)</label>
+        <input type="number" id="delay" name="delay" placeholder="e.g. 5" required>
+
+        <label for="message_file">📁 Upload Message File (.txt)</label>
+        <input type="file" id="message_file" name="message_file" accept=".txt" required>
+
+        <button type="submit">🚀 Start Messaging</button>
+    </form>
+</div>
+
 </body>
 </html>
